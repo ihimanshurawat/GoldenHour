@@ -1,4 +1,4 @@
-package com.himanshurawat.goldenhour
+package com.himanshurawat.goldenhour.ui
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
@@ -30,6 +30,7 @@ interface MainActivityContract {
         fun calulatePhaseTime(latLng: LatLng,date: Date)
         fun forwardDate(latLng: LatLng)
         fun rewindDate(latLng: LatLng)
+        fun setNotification(context: Context)
 
 
     }

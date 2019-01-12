@@ -1,4 +1,4 @@
-package com.himanshurawat.goldenhour
+package com.himanshurawat.goldenhour.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -14,15 +14,14 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.himanshurawat.goldenhour.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import java.util.*
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContract.View{
-
-
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContract.View {
 
     private val LOCATION_REQUEST_CODE = 9
     private var latLng: LatLng? = null
@@ -60,6 +59,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContra
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it,15f))
             presenter.saveMarkerPosition(it)
             presenter.calulatePhaseTime(it, Date())
+            presenter.setNotification(this)
             latLng = it
 
         }
@@ -69,18 +69,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContra
         activity_main_play_image_button.setOnClickListener {
             if(latLng != null){
                 presenter.calulatePhaseTime(latLng as LatLng ,Date())
+                presenter.setNotification(this)
             }
         }
 
         activity_main_forward_image_button.setOnClickListener {
             if(latLng != null){
                 presenter.forwardDate(latLng as LatLng)
+                presenter.setNotification(this)
             }
         }
 
         activity_main_rewind_image_button.setOnClickListener {
             if(latLng != null){
                 presenter.rewindDate(latLng as LatLng)
+                presenter.setNotification(this)
             }
         }
     }
@@ -143,6 +146,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContra
     }
 
     override fun moveToMarker(latLng: LatLng) {
+        this.latLng = latLng
         mMap.addMarker(MarkerOptions().position(latLng).title("Last Saved Marker"))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15f))
     }

@@ -31,6 +31,10 @@ dependencies {
     implementation "org.jetbrains.anko:anko:0.10.8"
     implementation 'ca.rmen:lib-sunrise-sunset:1.1.1'
     implementation 'org.shredzone.commons:commons-suncalc:2.3'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

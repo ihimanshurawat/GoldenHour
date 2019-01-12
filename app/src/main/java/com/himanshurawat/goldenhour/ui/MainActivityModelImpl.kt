@@ -1,9 +1,9 @@
-package com.himanshurawat.goldenhour
+package com.himanshurawat.goldenhour.ui
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 
-class MainActivityModelImpl(context: Context): MainActivityContract.Model{
+class MainActivityModelImpl(context: Context): MainActivityContract.Model {
 
     override fun saveMarker(lat: Double,long: Double) {
         pref.edit().putString("lat",lat.toString()).apply()

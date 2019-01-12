@@ -23,7 +23,7 @@
         android:layout_above="@+id/activity_main_linear_layout"
         android:layout_height="match_parent"
         map:layout_constraintStart_toStartOf="parent"
-        tools:context=".MainActivity"
+        tools:context=".ui.MainActivity"
         tools:layout_editor_absoluteY="65dp" />
 
     <LinearLayout
@@ -203,21 +203,21 @@
 
                 <ImageButton
                     android:id="@+id/activity_main_rewind_image_button"
-                    android:layout_margin="16dp"
+                    android:padding="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_fast_rewind_button" />
 
                 <ImageButton
                     android:id="@+id/activity_main_play_image_button"
-                    android:layout_margin="16dp"
+                    android:padding="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_play_symbol" />
 
                 <ImageButton
                     android:id="@+id/activity_main_forward_image_button"
-                    android:layout_margin="16dp"
+                    android:padding="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_fast_forward_button" />

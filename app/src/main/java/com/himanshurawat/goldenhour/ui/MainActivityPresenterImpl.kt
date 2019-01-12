@@ -1,9 +1,14 @@
-package com.himanshurawat.goldenhour
+package com.himanshurawat.goldenhour.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.gms.maps.model.LatLng
+import com.himanshurawat.goldenhour.broadcastreceiver.GoldenHourBroadcast
 import org.shredzone.commons.suncalc.MoonTimes
 import org.shredzone.commons.suncalc.SunTimes
 import java.text.SimpleDateFormat
@@ -11,6 +16,24 @@ import java.util.*
 
 
 class MainActivityPresenterImpl(private val view: MainActivityContract.View): MainActivityContract.Presenter {
+
+
+    override fun setNotification(context: Context) {
+        // SunSet Date
+        if(sunSetDate != null){
+            val calendar = Calendar.getInstance()
+            calendar.time = sunSetDate
+            //One Hour Before Golden Hour
+            calendar.add(Calendar.HOUR_OF_DAY,-1)
+
+            val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context.applicationContext,GoldenHourBroadcast::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context.applicationContext,57,intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+            alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.timeInMillis,pendingIntent)
+        }
+    }
+
     override fun forwardDate(latLng: LatLng) {
         val calendar: Calendar = Calendar.getInstance()
         calendar.time = date
@@ -36,7 +59,6 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
         val latLng = model.reteriveMarker()
         if (latLng != null){
             view.moveToMarker(latLng)
-
             calulatePhaseTime(latLng,Date())
         }else{
             view.hidePhaseTime()
@@ -46,6 +68,7 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
 
     private lateinit var model: MainActivityModelImpl
     private var date: Date? = null
+    private var sunSetDate: Date? = null
 
     override fun setupModel(context: Context) {
         model = MainActivityModelImpl(context)
@@ -88,6 +111,7 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
         val sunRise = sunTime.rise
         val sunRiseString = dateFormatter.format(sunRise)
         val sunSet = sunTime.set
+        sunSetDate = sunSet
         val sunSetString = dateFormatter.format(sunSet)
 
         //Moon
