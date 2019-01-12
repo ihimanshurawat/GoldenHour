@@ -26,11 +26,15 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
             //One Hour Before Golden Hour
             calendar.add(Calendar.HOUR_OF_DAY,-1)
 
-            val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(context.applicationContext,GoldenHourBroadcast::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context.applicationContext,57,intent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-            alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.timeInMillis,pendingIntent)
+            //Only Set Notification If Golden Hour hasn't passed
+            if(System.currentTimeMillis() < calendar.timeInMillis){
+                val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(context.applicationContext,GoldenHourBroadcast::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(context.applicationContext,57,intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT)
+                alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.timeInMillis,pendingIntent)
+            }
+
         }
     }
 
