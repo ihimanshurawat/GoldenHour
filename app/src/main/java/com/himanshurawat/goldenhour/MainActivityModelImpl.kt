@@ -3,7 +3,7 @@ package com.himanshurawat.goldenhour
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 
-class MainActivityModelImpl(private val context: Context): MainActivityContract.Model{
+class MainActivityModelImpl(context: Context): MainActivityContract.Model{
 
     override fun saveMarker(lat: Double,long: Double) {
         pref.edit().putString("lat",lat.toString()).apply()
