@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/main_menu_search"
+        android:icon="@drawable/search_icon"
+        android:title="Search"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/main_menu_clear_marker"
+        android:title="Clear Marker"
+        />
+
+    <item
+        android:id="@+id/main_menu_save_marker"
+        android:title="Save Marker"
+        />
+
+    <item
+        android:id="@+id/main_menu_view_saved_marker"
+        android:title="View Saved"
+        />
+
+
+
+</menu>

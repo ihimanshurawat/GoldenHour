@@ -11,7 +11,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.himanshurawat.goldenhour.R
-import com.himanshurawat.goldenhour.ui.MainActivity
+import com.himanshurawat.goldenhour.ui.main.MainActivity
 
 class GoldenHourBroadcast : BroadcastReceiver() {
 

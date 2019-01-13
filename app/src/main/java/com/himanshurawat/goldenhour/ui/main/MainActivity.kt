@@ -1,12 +1,20 @@
-package com.himanshurawat.goldenhour.ui
+package com.himanshurawat.goldenhour.ui.main
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
+import com.google.android.gms.location.places.ui.PlaceAutocomplete
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,12 +29,45 @@ import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
 import java.util.*
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContract.View {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback,
+    MainActivityContract.View,
+    SearchView.OnQueryTextListener {
 
-    private val LOCATION_REQUEST_CODE = 9
+
+    override fun cancelNotification() {
+
+    }
+
+
+    override fun clearMap() {
+        if(::mMap.isInitialized){
+            mMap.clear()
+        }
+    }
+
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null && query.isNotEmpty()){
+            presenter.searchQuerySubmit(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return true
+    }
+
+    companion object {
+        val LOCATION_REQUEST_CODE = 9
+        val PLACES_REQUEST_CODE = 69
+    }
+
+
     private var latLng: LatLng? = null
     private lateinit var mMap: GoogleMap
     private lateinit var presenter: MainActivityContract.Presenter
+    private var isMarkerPlaced = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,17 +99,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContra
             mMap.addMarker(MarkerOptions().position(it).title("Marker"))
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it,15f))
             presenter.saveMarkerPosition(it)
-            presenter.calulatePhaseTime(it, Date())
+            presenter.calculatePhaseTime(it, Date())
             presenter.setNotification(this)
             latLng = it
-
+            isMarkerPlaced = true
+            invalidateOptionsMenu()
         }
+
     }
 
     private fun setup(){
         activity_main_play_image_button.setOnClickListener {
             if(latLng != null){
-                presenter.calulatePhaseTime(latLng as LatLng ,Date())
+                presenter.calculatePhaseTime(latLng as LatLng ,Date())
                 presenter.setNotification(this)
             }
         }
@@ -83,17 +126,80 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContra
         activity_main_rewind_image_button.setOnClickListener {
             if(latLng != null){
                 presenter.rewindDate(latLng as LatLng)
-                presenter.setNotification(this)
             }
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu,menu)
+        return true
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when(item.itemId){
+            R.id.main_menu_search -> {
+                try {
+                    val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                        .build(this)
+
+                    startActivityForResult(intent,
+                        PLACES_REQUEST_CODE
+                    )
+                }catch (e: GooglePlayServicesRepairableException){
+
+                } catch (e: GooglePlayServicesNotAvailableException){
+
+                }
+            }
+
+            R.id.main_menu_clear_marker -> {
+                presenter.clearMarker()
+                isMarkerPlaced = false
+
+                invalidateOptionsMenu()
+            }
+        }
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
+        if(isMarkerPlaced){
+            menu.findItem(R.id.main_menu_search).isVisible = true
+            menu.findItem(R.id.main_menu_clear_marker).isVisible = true
+            menu.findItem(R.id.main_menu_save_marker).isVisible = true
+            menu.findItem(R.id.main_menu_view_saved_marker).isVisible = true
+        }else{
+            menu.findItem(R.id.main_menu_search).isVisible = true
+            menu.findItem(R.id.main_menu_clear_marker).isVisible = false
+            menu.findItem(R.id.main_menu_save_marker).isVisible = false
+            menu.findItem(R.id.main_menu_view_saved_marker).isVisible = true
+        }
+
+        return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == PLACES_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            val place = PlaceAutocomplete.getPlace(this,data)
+            val latLng = place.latLng
+            mMap.clear()
+            mMap.addMarker(MarkerOptions().position(latLng).title(place.name.toString()))
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15f))
+            presenter.saveMarkerPosition(latLng)
+            presenter.calculatePhaseTime(latLng, Date())
+            presenter.setNotification(this)
+            this.latLng = latLng
+
+        }
+    }
 
     override fun requestLocationPermission() {
         ActivityCompat.requestPermissions(this,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),
-            LOCATION_REQUEST_CODE)
+            LOCATION_REQUEST_CODE
+        )
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -146,6 +252,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainActivityContra
     }
 
     override fun moveToMarker(latLng: LatLng) {
+        isMarkerPlaced = true
+        invalidateOptionsMenu()
         this.latLng = latLng
         mMap.addMarker(MarkerOptions().position(latLng).title("Last Saved Marker"))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15f))

@@ -1,4 +1,4 @@
-package com.himanshurawat.goldenhour.ui
+package com.himanshurawat.goldenhour.ui.main
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
@@ -8,7 +8,7 @@ interface MainActivityContract {
 
     interface Model{
         fun saveMarker(lat: Double,long: Double)
-        fun reteriveMarker(): LatLng?
+        fun retreiveMarker(): LatLng?
     }
 
     interface View{
@@ -18,6 +18,8 @@ interface MainActivityContract {
         fun setTextView(sunRise: String, sunSet: String, moonRise: String, moonSet: String,dateString: String)
         fun showPhaseTime()
         fun hidePhaseTime()
+        fun clearMap()
+        fun cancelNotification()
     }
 
     interface Presenter{
@@ -25,13 +27,19 @@ interface MainActivityContract {
         fun checkLocationPermission(context: Context)
         fun dialogConfirm()
         fun dialogCancel()
+        //PhaseTime
         fun setPreviousMarker()
         fun saveMarkerPosition(latLng: LatLng)
-        fun calulatePhaseTime(latLng: LatLng,date: Date)
+        fun calculatePhaseTime(latLng: LatLng, date: Date)
         fun forwardDate(latLng: LatLng)
         fun rewindDate(latLng: LatLng)
         fun setNotification(context: Context)
 
+        //Search
+        fun searchQuerySubmit(query: String)
+
+        //MenuOptions
+        fun clearMarker()
 
     }
 }

@@ -1,4 +1,4 @@
-package com.himanshurawat.goldenhour.ui
+package com.himanshurawat.goldenhour.ui.main
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,16 +6,50 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.gms.maps.model.LatLng
 import com.himanshurawat.goldenhour.broadcastreceiver.GoldenHourBroadcast
+import com.himanshurawat.goldenhour.network.NetworkClient
+import com.himanshurawat.goldenhour.network.NetworkService
+import com.himanshurawat.goldenhour.network.SearchResponse
 import org.shredzone.commons.suncalc.MoonTimes
 import org.shredzone.commons.suncalc.SunTimes
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MainActivityPresenterImpl(private val view: MainActivityContract.View): MainActivityContract.Presenter {
+class MainActivityPresenterImpl(private val view: MainActivityContract.View):
+    MainActivityContract.Presenter {
+
+
+    override fun clearMarker() {
+        view.clearMap()
+        view.hidePhaseTime()
+        model.saveMarker(0.0,0.0)
+        view.cancelNotification()
+    }
+
+    override fun searchQuerySubmit(query: String) {
+        val retrofit = NetworkClient.getNetworkClient()
+        val retrofitService = retrofit.create(NetworkService::class.java)
+        retrofitService.getPlaces(query).enqueue(object: Callback<SearchResponse>{
+            override fun onFailure(call: Call<SearchResponse>?, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<SearchResponse>?,
+                response: Response<SearchResponse>?
+            ) {
+                if(response != null){
+                    response.body()?.candidates
+                }
+            }
+
+        })
+    }
 
 
     override fun setNotification(context: Context) {
@@ -43,7 +77,7 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
         calendar.time = date
         calendar.add(Calendar.DAY_OF_MONTH,1)
         val newDate = calendar.time
-        calulatePhaseTime(latLng, newDate)
+        calculatePhaseTime(latLng, newDate)
     }
 
     override fun rewindDate(latLng: LatLng) {
@@ -51,7 +85,7 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
         calendar.time = date
         calendar.add(Calendar.DAY_OF_MONTH,-1)
         val newDate = calendar.time
-        calulatePhaseTime(latLng, newDate)
+        calculatePhaseTime(latLng, newDate)
     }
 
 
@@ -60,10 +94,10 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
     }
 
     override fun setPreviousMarker() {
-        val latLng = model.reteriveMarker()
+        val latLng = model.retreiveMarker()
         if (latLng != null){
             view.moveToMarker(latLng)
-            calulatePhaseTime(latLng,Date())
+            calculatePhaseTime(latLng,Date())
         }else{
             view.hidePhaseTime()
         }
@@ -107,7 +141,7 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View): Ma
     }
 
 
-    override fun calulatePhaseTime(latLng: LatLng, date: Date) {
+    override fun calculatePhaseTime(latLng: LatLng, date: Date) {
         this.date = date
         val dateFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
         //Sun
