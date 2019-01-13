@@ -2,6 +2,9 @@ package com.himanshurawat.goldenhour.ui.main
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +25,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.himanshurawat.goldenhour.R
+import com.himanshurawat.goldenhour.broadcastreceiver.GoldenHourBroadcast
 import com.himanshurawat.goldenhour.ui.saved.SavedActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.alert
@@ -35,7 +40,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     override fun cancelNotification() {
-
+        val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(applicationContext,GoldenHourBroadcast::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext,57,intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.cancel(pendingIntent)
     }
 
 
@@ -148,11 +157,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 isMarkerPlaced = false
 
                 invalidateOptionsMenu()
+                Snackbar.make(activity_main_root,"Marker Cleared",Snackbar.LENGTH_SHORT).show()
             }
 
             R.id.main_menu_save_marker ->{
                 if(latLng != null){
                     presenter.saveItem(latLng as LatLng)
+                    Snackbar.make(activity_main_root,"Current Marker Saved",Snackbar.LENGTH_SHORT).show()
                 }
 
             }
@@ -193,6 +204,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             presenter.calculatePhaseTime(latLng, Date())
             presenter.setNotification(this)
             this.latLng = latLng
+        }else if(requestCode == SAVED_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            if(data != null){
+                val latLng = LatLng(data.getDoubleExtra("lat",0.0),data.getDoubleExtra("lng",0.0))
+                mMap.clear()
+                mMap.addMarker(MarkerOptions().position(latLng).title("Marker"))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15f))
+                presenter.saveMarkerPosition(latLng)
+                presenter.calculatePhaseTime(latLng, Date())
+                presenter.setNotification(this)
+                this.latLng = latLng
+                isMarkerPlaced = true
+                invalidateOptionsMenu()
+
+            }
 
         }
     }

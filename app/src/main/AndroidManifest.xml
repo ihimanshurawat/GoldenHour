@@ -23,16 +23,23 @@
             android:name=".ui.main.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.saved.SavedActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".ui.main.MainActivity"
             />
+        <activity android:name=".ui.splash.SplashActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
         <uses-library
             android:name="org.apache.http.legacy"

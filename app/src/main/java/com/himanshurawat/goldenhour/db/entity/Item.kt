@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "item")
 class Item(
@@ -16,4 +17,4 @@ class Item(
     var lng: Double,
     @ColumnInfo(name = "timestamp")
     var timestamp: Long = 0
-)
+): Serializable

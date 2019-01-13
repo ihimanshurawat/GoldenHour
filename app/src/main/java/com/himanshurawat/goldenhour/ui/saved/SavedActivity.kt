@@ -1,14 +1,18 @@
 package com.himanshurawat.goldenhour.ui.saved
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Adapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.himanshurawat.goldenhour.R
 import com.himanshurawat.goldenhour.adapter.LocationItemAdapter
 import com.himanshurawat.goldenhour.db.entity.Item
+import com.himanshurawat.goldenhour.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_saved.*
 import org.jetbrains.anko.find
 
@@ -38,7 +42,11 @@ class SavedActivity: AppCompatActivity(),SavedActivityContract.View,
     override fun locationItemClicked(item: Item,pos: Int) {
 
         //Finish to Previous Activity
-
+        val intent = Intent(this@SavedActivity,MainActivity::class.java)
+        intent.putExtra("lat",item.lat)
+        intent.putExtra("lng",item.lng)
+        setResult(Activity.RESULT_OK,intent)
+        finish()
     }
 
     override fun deleteButtonClicked(item: Item,pos: Int) {
@@ -71,6 +79,8 @@ class SavedActivity: AppCompatActivity(),SavedActivityContract.View,
         adapter = LocationItemAdapter(dataList,this,this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)
+        val dividerItemDecoration = DividerItemDecoration(this, RecyclerView.VERTICAL)
+        recyclerView.addItemDecoration(dividerItemDecoration)
         presenter.populate()
     }
 }

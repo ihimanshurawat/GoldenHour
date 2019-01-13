@@ -17,6 +17,8 @@
     <item
         android:id="@+id/main_menu_save_marker"
         android:title="Save Marker"
+        android:icon="@drawable/save_icon"
+        app:showAsAction="ifRoom"
         />
 
     <item
