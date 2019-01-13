@@ -26,10 +26,10 @@ class LocationItemAdapter(private val dataList: MutableList<Item>, private val c
         holder.latTextView.text = "Lat - ${item.lat}"
         holder.longTextView.text = "Long - ${item.lng}"
         holder.deleteImageView.setOnClickListener{
-            listener.deleteButtonClicked()
+            listener.deleteButtonClicked(item,pos)
         }
         holder.itemView.setOnClickListener{
-            listener.locationItemClicked()
+            listener.locationItemClicked(item,pos)
         }
 
     }
@@ -42,7 +42,7 @@ class LocationItemAdapter(private val dataList: MutableList<Item>, private val c
     }
 
     interface LocationItemClickListener{
-        fun locationItemClicked()
-        fun deleteButtonClicked()
+        fun locationItemClicked(item: Item,pos: Int)
+        fun deleteButtonClicked(item: Item,pos: Int)
     }
 }

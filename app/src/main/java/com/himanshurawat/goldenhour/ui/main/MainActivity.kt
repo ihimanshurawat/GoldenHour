@@ -23,6 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.himanshurawat.goldenhour.R
+import com.himanshurawat.goldenhour.ui.saved.SavedActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
@@ -30,8 +31,7 @@ import org.jetbrains.anko.yesButton
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback,
-    MainActivityContract.View,
-    SearchView.OnQueryTextListener {
+    MainActivityContract.View{
 
 
     override fun cancelNotification() {
@@ -46,20 +46,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        if(query != null && query.isNotEmpty()){
-            presenter.searchQuerySubmit(query)
-        }
-        return true
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-        return true
-    }
-
     companion object {
         val LOCATION_REQUEST_CODE = 9
         val PLACES_REQUEST_CODE = 69
+        val SAVED_ACTIVITY_REQUEST_CODE = 399
     }
 
 
@@ -158,6 +148,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
                 isMarkerPlaced = false
 
                 invalidateOptionsMenu()
+            }
+
+            R.id.main_menu_save_marker ->{
+                if(latLng != null){
+                    presenter.saveItem(latLng as LatLng)
+                }
+
+            }
+
+            R.id.main_menu_view_saved_marker ->{
+                val intent = Intent(this@MainActivity,SavedActivity::class.java)
+                startActivityForResult(intent,SAVED_ACTIVITY_REQUEST_CODE)
             }
         }
         return true

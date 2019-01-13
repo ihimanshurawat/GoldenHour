@@ -2,6 +2,7 @@ package com.himanshurawat.goldenhour.ui.main
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
+import com.himanshurawat.goldenhour.db.entity.Item
 import java.util.*
 
 interface MainActivityContract {
@@ -9,6 +10,7 @@ interface MainActivityContract {
     interface Model{
         fun saveMarker(lat: Double,long: Double)
         fun retreiveMarker(): LatLng?
+        fun addItem(item: Item)
     }
 
     interface View{
@@ -34,12 +36,9 @@ interface MainActivityContract {
         fun forwardDate(latLng: LatLng)
         fun rewindDate(latLng: LatLng)
         fun setNotification(context: Context)
-
-        //Search
-        fun searchQuerySubmit(query: String)
-
         //MenuOptions
         fun clearMarker()
-
+        //Database
+        fun saveItem(latLng: LatLng)
     }
 }

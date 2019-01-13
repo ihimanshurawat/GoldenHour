@@ -4,6 +4,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -36,10 +39,9 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
-    def room_version = "2.1.0-alpha03"
 
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:2.1.0-alpha03"
+    kapt "androidx.room:room-compiler:2.1.0-alpha03"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'

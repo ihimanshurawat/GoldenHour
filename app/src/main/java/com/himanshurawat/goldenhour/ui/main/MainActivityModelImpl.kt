@@ -2,9 +2,15 @@ package com.himanshurawat.goldenhour.ui.main
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
+import com.himanshurawat.goldenhour.db.ItemDatabase
+import com.himanshurawat.goldenhour.db.entity.Item
 
 class MainActivityModelImpl(context: Context):
     MainActivityContract.Model {
+
+    override fun addItem(item: Item) {
+        database.getDao().insert(item)
+    }
 
     override fun saveMarker(lat: Double,long: Double) {
         pref.edit().putString("lat",lat.toString()).apply()
@@ -21,6 +27,8 @@ class MainActivityModelImpl(context: Context):
     }
 
     private val pref = context.applicationContext.getSharedPreferences("userPref",Context.MODE_PRIVATE)
+    private val database = ItemDatabase.getInstance(context)
+
 
 
 

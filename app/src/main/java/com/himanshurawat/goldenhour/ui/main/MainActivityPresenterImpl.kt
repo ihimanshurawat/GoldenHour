@@ -8,14 +8,10 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.himanshurawat.goldenhour.broadcastreceiver.GoldenHourBroadcast
-import com.himanshurawat.goldenhour.network.NetworkClient
-import com.himanshurawat.goldenhour.network.NetworkService
-import com.himanshurawat.goldenhour.network.SearchResponse
+import com.himanshurawat.goldenhour.db.entity.Item
+
 import org.shredzone.commons.suncalc.MoonTimes
 import org.shredzone.commons.suncalc.SunTimes
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,31 +20,17 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View):
     MainActivityContract.Presenter {
 
 
+    override fun saveItem(latLng: LatLng) {
+        val item = Item(0,latLng.latitude,latLng.longitude,System.currentTimeMillis())
+        model.addItem(item)
+    }
+
+
     override fun clearMarker() {
         view.clearMap()
         view.hidePhaseTime()
         model.saveMarker(0.0,0.0)
         view.cancelNotification()
-    }
-
-    override fun searchQuerySubmit(query: String) {
-        val retrofit = NetworkClient.getNetworkClient()
-        val retrofitService = retrofit.create(NetworkService::class.java)
-        retrofitService.getPlaces(query).enqueue(object: Callback<SearchResponse>{
-            override fun onFailure(call: Call<SearchResponse>?, t: Throwable) {
-
-            }
-
-            override fun onResponse(
-                call: Call<SearchResponse>?,
-                response: Response<SearchResponse>?
-            ) {
-                if(response != null){
-                    response.body()?.candidates
-                }
-            }
-
-        })
     }
 
 

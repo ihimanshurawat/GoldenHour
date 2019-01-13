@@ -19,7 +19,9 @@ abstract class ItemDatabase: RoomDatabase() {
             if(INSTANCE == null){
                 synchronized(ItemDatabase::class){
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                        ItemDatabase::class.java, "item_database").build()
+                        ItemDatabase::class.java, "database")
+                        .allowMainThreadQueries()
+                        .build()
                 }
             }
             return INSTANCE as ItemDatabase
