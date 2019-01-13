@@ -9,7 +9,7 @@ interface ItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(item: Item)
 
-    @Query("SELECT * FROM item ORDER BY timestamp DESC")
+    @Query("SELECT * FROM item")
     fun allItem(): List<Item>
 
     @Delete

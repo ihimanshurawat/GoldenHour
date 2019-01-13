@@ -25,6 +25,7 @@ class LocationItemAdapter(private val dataList: MutableList<Item>, private val c
         val item = dataList[pos]
         holder.latTextView.text = "Lat - ${item.lat}"
         holder.longTextView.text = "Long - ${item.lng}"
+
         holder.deleteImageView.setOnClickListener{
             listener.deleteButtonClicked(item,pos)
         }

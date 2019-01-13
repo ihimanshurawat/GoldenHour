@@ -32,8 +32,11 @@ class SavedActivity: AppCompatActivity(),SavedActivityContract.View,
 
 
     override fun itemDeleted(pos: Int) {
-        dataList.removeAt(pos)
-        adapter.notifyItemRemoved(pos)
+        if(!dataList.isEmpty()){
+            dataList.removeAt(pos)
+            adapter.notifyDataSetChanged()
+        }
+
         if(dataList.isEmpty()){
             activity_saved_text_view.visibility = View.VISIBLE
         }
@@ -51,6 +54,7 @@ class SavedActivity: AppCompatActivity(),SavedActivityContract.View,
 
     override fun deleteButtonClicked(item: Item,pos: Int) {
         presenter.delete(item,pos)
+
 
     }
 
