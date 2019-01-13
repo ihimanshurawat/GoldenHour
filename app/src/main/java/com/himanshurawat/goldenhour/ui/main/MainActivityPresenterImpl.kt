@@ -167,9 +167,4 @@ class MainActivityPresenterImpl(private val view: MainActivityContract.View):
         view.showPhaseTime()
     }
 
-
-
-
-
-
 }
