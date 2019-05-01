@@ -252,7 +252,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback,
             message = "Location is an essential feature for this Application. We will be able to serve you"+
                     " better if you grant us Location Permission."
             noButton {
-                title = "Dismiss"
                 presenter.dialogCancel()
             }
             yesButton {
